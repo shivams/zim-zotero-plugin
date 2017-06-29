@@ -30,6 +30,19 @@ class ZoteroPlugin(PluginClass):
         'help': 'Plugins:Zotero Citations',
     }
 
+    def zotero_handle(self, link):
+        '''This handles zotereo links of the form zotero://
+        '''
+        url = link.replace('zotero', 'http')
+        try:
+            if "success" in urllib2.urlopen(url).read().lower():
+                return True
+            else:
+                return False
+        except:
+            return False
+
+
 
 @extends('MainWindow')
 class MainWindowExtension(WindowExtension):
@@ -46,10 +59,16 @@ class MainWindowExtension(WindowExtension):
     </ui>
     '''
 
+    def __init__(self, plugin, window):
+        ''' Constructor '''
+        WindowExtension.__init__(self, plugin, window)
+        self.window.ui.register_url_handler('zotero', self.plugin.zotero_handle)
+
     @action(_('_Citation...'), '', '<Shift><Primary>I') # T: menu item
     def insert_citation(self):
         '''Action called by the menu item or key binding,
         '''
+        # print dir(self.window)
         ZoteroDialog(self.window, self.window.pageview).run()
 
 

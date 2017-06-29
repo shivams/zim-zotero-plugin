@@ -17,6 +17,6 @@ Press `<Shift>-<Control>-I` or go to Insert -> Citations. A dialog will open up,
 Handling zotero:// Links
 ------------------------
 
-Items, that are addeed, are linked to Zotero using the `zotero://` identifier. Currently, Zim doesn't handle this identifier. So, you will have to create a custom script. A small such script is available in the repo: `zotero_link_handler.sh`. Copy it somewhere in your PATH.
+Items, that are added, are linked to Zotero using the `zotero://` identifier. Currently, Zim doesn't handle this identifier. So, you will have to create a custom script. A small such script is available in the repo: `zotero_link_handler.sh`. Copy it somewhere in your PATH.
 
 And then, when in Zim, right click on the Zotero links and click Open With -> Customize, and add this custom script.
