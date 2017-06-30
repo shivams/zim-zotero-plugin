@@ -5,14 +5,14 @@ This ZIM Wiki plugin provides integration between Zotero (Reference Manager) and
 
 Clone this repo to your plugins folder and restart your Zim wiki:
 
-    git clone <this-repo> ~/.local/share/zim/plugins/zim-zotero-plugin
+    git clone https://github.com/shivams/zim-zotero-plugin ~/.local/share/zim/plugins/zim-zotero-plugin
 
 Note that you will need to install `zotxt` (https://github.com/egh/zotxt) plugin in your Zotero to make this plugin work.
 
 How does it work?
 -----------------
 
-Press `<Shift>-<Control>-I` or go to Insert -> Citations. A dialog will open up, where you can enter your query to search for items in your Zotero collection. After pressing `GO`, all the matching items will be added into your Zim Wiki.
+Press `<Control><Alt>-I` or go to Insert -> Citations. A dialog will open up, where you can enter your query to search for items in your Zotero collection. After pressing `GO`, all the matching items will be added into your Zim Wiki.
 
 Handling zotero:// Links
 ------------------------

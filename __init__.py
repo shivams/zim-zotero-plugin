@@ -64,7 +64,7 @@ class MainWindowExtension(WindowExtension):
         WindowExtension.__init__(self, plugin, window)
         self.window.ui.register_url_handler('zotero', self.plugin.zotero_handle)
 
-    @action(_('_Citation...'), '', '<Shift><Primary>I') # T: menu item
+    @action(_('_Citation...'), '', '<Primary><Alt>I') # T: menu item
     def insert_citation(self):
         '''Action called by the menu item or key binding,
         '''
@@ -83,7 +83,10 @@ class ZoteroDialog(Dialog):
         self.textentry = InputEntry()
         self.vbox.pack_start(self.textentry, False)
         first = None
-        for text in ["Search in Title, Author and Date","Search in All Fields and Tags","Search Everywhere"]:
+        options = ["Search in Title, Author and Date",
+                   "Search in All Fields and Tags",
+                   "Search Everywhere"]
+        for text in options:
             self.radio = gtk.RadioButton( first, text)
             if not first:
                 first = self.radio
@@ -103,24 +106,25 @@ class ZoteroDialog(Dialog):
 
     def insert_citation(self, text, radiotext, buffer):
         root = "127.0.0.1:23119/zotxt"
+        format = '&format=bibliography'
         method = '' #Method defaults to titleCreatorYear
         if "Tags" in radiotext:
             method = '&method=fields'
         elif "Everywhere" in radiotext:
             method = '&method=everything'
-        url = 'http://' + root + '/search?q=' + text + method
+        url = 'http://' + root + '/search?q=' + text + format + method
         try:
             # resp = requests.get(url).json()
             resp = json.loads(urllib2.urlopen(url).read())
-            refs = []
             for i in resp:
-                key = '0_' + i['id'].split('/')[-1]
+                key = i['key']
+                # key = '0_' + i['id'].split('/')[-1]
                 #Sometimes, articles may have missing fields, so they can be skipped
                 try:
                     href =  'zotero://' + root + '/select?key=' + key
-                    title = i['title']
-                    refs.append({'title': title, 'href': href})
-                    buffer.insert_link_at_cursor(title, href=href)
+                    # title = i['title']
+                    bibtext = i['text']
+                    buffer.insert_link_at_cursor(bibtext, href=href)
                     buffer.insert_at_cursor("\n")
                 except:
                     pass
