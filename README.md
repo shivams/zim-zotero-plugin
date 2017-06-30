@@ -25,4 +25,8 @@ TODOs
 -----
 
 - [ ] Intra-page References
+  - See this launchpad wishlist: https://bugs.launchpad.net/zim/+bug/380844
+  - And this blueprint by Jaap (Zim BDFL): https://github.com/jaap-karssenberg/zim-wiki/wiki/Blueprint-anchors
 - [ ] Bibtex Support
+
+
