@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
 #
-# Copyright: 2017 Shivam Sharma <grahamrow@gmail.com>
+# Copyright: 2017 Shivam Sharma <shivam.src@gmail.com>
 # License: GNU GPL v2 or higher
-#
-# Uses API code from Zotero's OpenOffice plugin to insert
-# reference links that open in Zotero.
 
 
 import gtk
