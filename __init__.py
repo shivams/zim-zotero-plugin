@@ -19,7 +19,7 @@ class ZoteroPlugin(PluginClass):
     """plugin info for zim."""
 
     plugin_info = {
-        'name': _('Zotero Citations'),
+        'name': _('Zotero Citations modified'),
         'description': _('Zotero is a free cross-platform desktop reference and paper management program (http://www.zotero.org/).'
                          'This plugin allows you to insert Zotero citations that link directly to the Zotero desktop application.'
                          'You need to install the "zotxt" plugin in Zotero application, and the Zotero application must be running'
@@ -29,7 +29,7 @@ class ZoteroPlugin(PluginClass):
     }
 
     def zotero_handle(self, link):
-        """Handles zotereo links of the form zotero://."""
+        """Handle Zotero links of the form zotero://."""
         url = link.replace('zotero', 'http')
         try:
             if "success" in urllib2.urlopen(url).read().lower():
@@ -38,6 +38,11 @@ class ZoteroPlugin(PluginClass):
                 return False
         except:
             return False
+
+    plugin_preferences = (
+        ('bibliography_style', 'choice', _('Bibliography Style'),
+         'bbtkey', ('bbtkey', 'easykey', 'key', 'bibliography')),
+    )
 
 
 @extends('MainWindow')
@@ -48,7 +53,7 @@ class MainWindowExtension(WindowExtension):
         <menubar name='menubar'>
             <menu action='insert_menu'>
                 <placeholder name='plugin_items'>
-                    <menuitem action='insert_citation'/>
+                    <menuitem action='insert_citation_bbt'/>
                 </placeholder>
             </menu>
         </menubar>
@@ -56,13 +61,13 @@ class MainWindowExtension(WindowExtension):
     '''
 
     def __init__(self, plugin, window):
-        """Constructor"""
+        """Window constructor."""
         WindowExtension.__init__(self, plugin, window)
         self.window.ui.register_url_handler('zotero', self.plugin.zotero_handle)
 
     @action(_('_Citation...'), '', '<Primary><Alt>I')  # T: menu item
-    def insert_citation(self):
-        """Action called by the menu item or key binding"""
+    def insert_citation_bbt(self):
+        """Will be called by the menu item or key binding."""
         # print dir(self.window)
         ZoteroDialog(self.window, self.window.pageview).run()
 
@@ -92,21 +97,23 @@ class ZoteroDialog(Dialog):
         Dialog.run(self)
 
     def do_response_ok(self):
+        """Call to insert citation when pressing ok."""
         text = self.textentry.get_text()
         buffer = self.pageview.view.get_buffer()
         active = [r for r in self.radio.get_group() if r.get_active()]  # @+
         radiotext = active[0].get_label()  # @+
-        self.insert_citation(text, radiotext, buffer)
+        self.insert_citation_bbt(text, radiotext, buffer)
         return True
 
     def insert_citation(self, text, radiotext, buffer):
+        """Will insert the whole bibliography text."""
         root = "127.0.0.1:23119/zotxt"
-        format = '&format=bibliography'
         method = ''  # Method defaults to titleCreatorYear
         if "Tags" in radiotext:
             method = '&method=fields'
         elif "Everywhere" in radiotext:
             method = '&method=everything'
+        format = '&format=bibliography'
         url = 'http://' + root + '/search?q=' + text + format + method
         try:
             # resp = requests.get(url).json()
@@ -120,6 +127,28 @@ class ZoteroDialog(Dialog):
                     # title = i['title']
                     bibtext = i['text']
                     buffer.insert_link_at_cursor(bibtext, href=href)
+                    buffer.insert_at_cursor("\n")
+                except:
+                    pass
+        except:
+            pass
+
+    def insert_citation_bbt(self, text, radiotext, buffer):
+        """Will insert the BBT keys returned by zotero."""
+        root = "127.0.0.1:23119/zotxt"
+        format = '&format=betterbibtexkey'
+        method = ''  # Method defaults to titleCreatorYear
+        if "Tags" in radiotext:
+            method = '&method=fields'
+        elif "Everywhere" in radiotext:
+            method = '&method=everything'
+        url = 'http://' + root + '/search?q=' + text + format + method
+        try:
+            resp = json.loads(urllib2.urlopen(url).read())
+            for bbtkey in resp:
+                try:
+                    zotlink = 'zotero://' + root + '/select?betterbibtexkey=' + bbtkey
+                    buffer.insert_link_at_cursor(bbtkey, href=zotlink)
                     buffer.insert_at_cursor("\n")
                 except:
                     pass
