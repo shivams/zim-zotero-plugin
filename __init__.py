@@ -16,20 +16,20 @@ import urllib2
 
 
 class ZoteroPlugin(PluginClass):
+    """plugin info for zim."""
 
     plugin_info = {
-        'name': _('Zotero Citations'), # T: plugin name
+        'name': _('Zotero Citations'),
         'description': _('Zotero is a free cross-platform desktop reference and paper management program (http://www.zotero.org/).'
                          'This plugin allows you to insert Zotero citations that link directly to the Zotero desktop application.'
                          'You need to install the "zotxt" plugin in Zotero application, and the Zotero application must be running'
-                         ' for this plugin to function.'), # T: plugin description
+                         ' for this plugin to function.'),
         'author': 'Shivam Sharma',
         'help': 'Plugins:Zotero Citations',
     }
 
     def zotero_handle(self, link):
-        '''This handles zotereo links of the form zotero://
-        '''
+        """Handles zotereo links of the form zotero://."""
         url = link.replace('zotero', 'http')
         try:
             if "success" in urllib2.urlopen(url).read().lower():
@@ -38,7 +38,6 @@ class ZoteroPlugin(PluginClass):
                 return False
         except:
             return False
-
 
 
 @extends('MainWindow')
@@ -57,14 +56,13 @@ class MainWindowExtension(WindowExtension):
     '''
 
     def __init__(self, plugin, window):
-        ''' Constructor '''
+        """Constructor"""
         WindowExtension.__init__(self, plugin, window)
         self.window.ui.register_url_handler('zotero', self.plugin.zotero_handle)
 
-    @action(_('_Citation...'), '', '<Primary><Alt>I') # T: menu item
+    @action(_('_Citation...'), '', '<Primary><Alt>I')  # T: menu item
     def insert_citation(self):
-        '''Action called by the menu item or key binding,
-        '''
+        """Action called by the menu item or key binding"""
         # print dir(self.window)
         ZoteroDialog(self.window, self.window.pageview).run()
 
@@ -72,9 +70,9 @@ class MainWindowExtension(WindowExtension):
 class ZoteroDialog(Dialog):
 
     def __init__(self, ui, pageview):
-        Dialog.__init__(self, ui, _('Search in Zotero'), # T: Dialog title
+        Dialog.__init__(self, ui, _('Search in Zotero'),  # T: Dialog title
                         button=(_('_GO'), 'gtk-ok'),  # T: Button label
-                        defaultwindowsize=(350, 200) )
+                        defaultwindowsize=(350, 200))
 
         self.pageview = pageview
         self.textentry = InputEntry()
@@ -84,10 +82,10 @@ class ZoteroDialog(Dialog):
                    "Search in All Fields and Tags",
                    "Search Everywhere"]
         for text in options:
-            self.radio = gtk.RadioButton( first, text)
+            self.radio = gtk.RadioButton(first, text)
             if not first:
                 first = self.radio
-            self.vbox.pack_start( self.radio, expand=False)
+            self.vbox.pack_start(self.radio, expand=False)
             self.radio.show()
 
     def run(self):
@@ -96,15 +94,15 @@ class ZoteroDialog(Dialog):
     def do_response_ok(self):
         text = self.textentry.get_text()
         buffer = self.pageview.view.get_buffer()
-        active = [r for r in self.radio.get_group() if r.get_active()] #@+
-        radiotext = active[0].get_label() #@+
+        active = [r for r in self.radio.get_group() if r.get_active()]  # @+
+        radiotext = active[0].get_label()  # @+
         self.insert_citation(text, radiotext, buffer)
         return True
 
     def insert_citation(self, text, radiotext, buffer):
         root = "127.0.0.1:23119/zotxt"
         format = '&format=bibliography'
-        method = '' #Method defaults to titleCreatorYear
+        method = ''  # Method defaults to titleCreatorYear
         if "Tags" in radiotext:
             method = '&method=fields'
         elif "Everywhere" in radiotext:
@@ -116,9 +114,9 @@ class ZoteroDialog(Dialog):
             for i in resp:
                 key = i['key']
                 # key = '0_' + i['id'].split('/')[-1]
-                #Sometimes, articles may have missing fields, so they can be skipped
+                # Sometimes, articles may have missing fields, can be skipped
                 try:
-                    href =  'zotero://' + root + '/select?key=' + key
+                    href = 'zotero://' + root + '/select?key=' + key
                     # title = i['title']
                     bibtext = i['text']
                     buffer.insert_link_at_cursor(bibtext, href=href)
