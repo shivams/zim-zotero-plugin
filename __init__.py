@@ -16,7 +16,7 @@ class ZoteroPlugin(PluginClass):
     """plugin info for zim."""
 
     plugin_info = {
-        'name': _('Zotero Citations modified'),
+        'name': _('Zotero Citations'),
         'description': _('Zotero is a free cross-platform desktop reference and paper management program (http://www.zotero.org/).'
                          'This plugin allows you to insert Zotero citations that link directly to the Zotero desktop application.'
                          'You need to install the "zotxt" plugin in Zotero application, and the Zotero application must be running'
