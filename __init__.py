@@ -122,9 +122,9 @@ class ZoteroDialog(Dialog):
         url = 'http://' + root + '/search?q=' + text + format + method
         try:
             resp = json.loads(urllib2.urlopen(url).read())
+            buffer.insert_at_cursor(url)
             if style == 'bibliography':
                 for i in resp:
-                    buffer.insert_at_cursor(i)
                     key = i['key']
                     try:
                         zotlink = 'zotero://' + root + '/select?key=' + key
@@ -134,11 +134,29 @@ class ZoteroDialog(Dialog):
                     except:
                         pass
             elif style == 'betterbibtexkey':
-                for bbtkey in resp:
+                for key in resp:
                     try:
                         zotlink = ('zotero://' + root +
-                                   '/select?betterbibtexkey=' + bbtkey)
-                        buffer.insert_link_at_cursor(bbtkey, href=zotlink)
+                                   '/select?betterbibtexkey=' + key)
+                        buffer.insert_link_at_cursor(key, href=zotlink)
+                        buffer.insert_at_cursor("\n")
+                    except:
+                        pass
+            elif style == 'easykey':
+                for key in resp:
+                    try:
+                        zotlink = ('zotero://' + root +
+                                   '/select?key=' + key)
+                        buffer.insert_link_at_cursor(key, href=zotlink)
+                        buffer.insert_at_cursor("\n")
+                    except:
+                        pass
+            elif style == 'key':
+                for key in resp:
+                    try:
+                        zotlink = ('zotero://' + root +
+                                   '/select?easykey=' + key)
+                        buffer.insert_link_at_cursor(key, href=zotlink)
                         buffer.insert_at_cursor("\n")
                     except:
                         pass
