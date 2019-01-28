@@ -6,10 +6,8 @@
 
 import gtk
 from zim.plugins import PluginClass, extends, WindowExtension
-from zim.errors import Error
 from zim.actions import action
-from zim.applications import Application, ApplicationError
-from zim.gui.widgets import Dialog, Button, InputEntry, ScrolledWindow
+from zim.gui.widgets import Dialog, InputEntry
 import json
 import urllib2
 
@@ -47,6 +45,7 @@ class ZoteroPlugin(PluginClass):
 
 @extends('MainWindow')
 class MainWindowExtension(WindowExtension):
+    """Define the input window."""
 
     uimanager_xml = '''
     <ui>
@@ -74,8 +73,10 @@ class MainWindowExtension(WindowExtension):
 
 
 class ZoteroDialog(Dialog):
+    """The Zotero specific Input Dialog."""
 
     def __init__(self, ui, pageview, preferences):
+        """Initialize the Input Box with options."""
         Dialog.__init__(self, ui, _('Search in Zotero'),  # T: Dialog title
                         button=(_('_GO'), 'gtk-ok'),  # T: Button label
                         defaultwindowsize=(350, 200))
@@ -96,6 +97,7 @@ class ZoteroDialog(Dialog):
             self.radio.show()
 
     def run(self):
+        """Call the widget.dialog.run method."""
         Dialog.run(self)
 
     def do_response_ok(self):
