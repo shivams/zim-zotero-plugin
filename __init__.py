@@ -122,7 +122,6 @@ class ZoteroDialog(Dialog):
         url = 'http://' + root + '/search?q=' + text + format + method
         try:
             resp = json.loads(urllib2.urlopen(url).read())
-            buffer.insert_at_cursor(url)
             if style == 'bibliography':
                 for i in resp:
                     key = i['key']
