@@ -14,11 +14,11 @@ How does it work?
 
 Press `<Control><Alt>-I` or go to Insert -> Citations. A dialog will open up, where you can enter your query to search for items in your Zotero collection. After pressing `GO`, all the matching items will be added into your zim wiki.
 
-Changing the default display style
+Changing the default link display format
 ------------------------
 
 In zim go to Edit -> Preferences -> Plugins -> Zotero Citations
-Under `Configure` you can choose the display style of Zotero links in zim:
+Under `Configure` you can choose the display format of Zotero links in zim:
 
 - `betterbibtexkey`, e.g. *bloomAreIdeasGetting2017*
 - `easykey`, e.g. *bloom:2017are*

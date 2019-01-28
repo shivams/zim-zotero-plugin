@@ -37,7 +37,7 @@ class ZoteroPlugin(PluginClass):
             return False
 
     plugin_preferences = (
-        ('bibliography_style', 'choice', _('Bibliography Style'),
+        ('link_format', 'choice', _('Link Format'),
          'betterbibtexkey',
          ('betterbibtexkey', 'easykey', 'key', 'bibliography')),
     )
@@ -117,12 +117,12 @@ class ZoteroDialog(Dialog):
             method = '&method=fields'
         elif "Everywhere" in radiotext:
             method = '&method=everything'
-        style = self.preferences['bibliography_style']
-        format = '&format=' + style
+        link_format = self.preferences['link_format']
+        format = '&format=' + link_format
         url = 'http://' + root + '/search?q=' + text + format + method
         try:
             resp = json.loads(urllib2.urlopen(url).read())
-            if style == 'bibliography':
+            if link_format == 'bibliography':
                 for i in resp:
                     key = i['key']
                     try:
@@ -132,7 +132,7 @@ class ZoteroDialog(Dialog):
                         buffer.insert_at_cursor("\n")
                     except:
                         pass
-            elif style == 'betterbibtexkey':
+            elif link_format == 'betterbibtexkey':
                 for key in resp:
                     try:
                         zotlink = ('zotero://' + root +
@@ -141,7 +141,7 @@ class ZoteroDialog(Dialog):
                         buffer.insert_at_cursor("\n")
                     except:
                         pass
-            elif style == 'easykey':
+            elif link_format == 'easykey':
                 for key in resp:
                     try:
                         zotlink = ('zotero://' + root +
@@ -150,7 +150,7 @@ class ZoteroDialog(Dialog):
                         buffer.insert_at_cursor("\n")
                     except:
                         pass
-            elif style == 'key':
+            elif link_format == 'key':
                 for key in resp:
                     try:
                         zotlink = ('zotero://' + root +
@@ -160,6 +160,7 @@ class ZoteroDialog(Dialog):
                     except:
                         pass
             else:
-                buffer.insert_at_cursor('style unknown: ' + style + "\n")
+                buffer.insert_at_cursor('link format unknown: ' + link_format
+                                        + "\n")
         except:
             pass
