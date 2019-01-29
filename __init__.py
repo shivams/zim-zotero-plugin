@@ -76,6 +76,7 @@ class ZoteroDialog(Dialog):
                         button=(_('_GO'), 'gtk-ok'),  # T: Button label
                         defaultwindowsize=(350, 200) )
 
+        # self.set_default_response(1)
         self.pageview = pageview
         self.textentry = InputEntry()
         self.vbox.pack_start(self.textentry, False)
@@ -89,6 +90,10 @@ class ZoteroDialog(Dialog):
                 first = self.radio
             self.vbox.pack_start( self.radio, expand=False)
             self.radio.show()
+
+        # self.search_button = gtk.Button(stock=gtk.STOCK_FIND)
+        # self.vbox.pack_start(self.search_button, False)
+		# self.search_button.connect_object('clicked', self.do_response_ok, self)
 
     def run(self):
         Dialog.run(self)
@@ -104,12 +109,13 @@ class ZoteroDialog(Dialog):
     def insert_citation(self, text, radiotext, buffer):
         root = "127.0.0.1:23119/zotxt"
         format = '&format=bibliography'
+        style = '&style=cell'
         method = '' #Method defaults to titleCreatorYear
         if "Tags" in radiotext:
             method = '&method=fields'
         elif "Everywhere" in radiotext:
             method = '&method=everything'
-        url = 'http://' + root + '/search?q=' + text + format + method
+        url = 'http://' + root + '/search?q=' + text + format + style + method
         try:
             # resp = requests.get(url).json()
             resp = json.loads(urllib2.urlopen(url).read())
@@ -122,7 +128,7 @@ class ZoteroDialog(Dialog):
                     # title = i['title']
                     bibtext = i['text']
                     buffer.insert_link_at_cursor(bibtext, href=href)
-                    buffer.insert_at_cursor("\n")
+                    buffer.insert_at_cursor("\r")
                 except:
                     pass
         except:
