@@ -145,7 +145,7 @@ class ZoteroDialog(Dialog):
                 for key in resp:
                     try:
                         zotlink = ('zotero://' + root +
-                                   '/select?key=' + key)
+                                   '/select?easykey=' + key)
                         buffer.insert_link_at_cursor(key, href=zotlink)
                         buffer.insert_at_cursor("\n")
                     except:
@@ -154,7 +154,7 @@ class ZoteroDialog(Dialog):
                 for key in resp:
                     try:
                         zotlink = ('zotero://' + root +
-                                   '/select?easykey=' + key)
+                                   '/select?key=' + key)
                         buffer.insert_link_at_cursor(key, href=zotlink)
                         buffer.insert_at_cursor("\n")
                     except:
