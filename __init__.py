@@ -30,7 +30,7 @@ class ZoteroPlugin(PluginClass):
         'author': 'Shivam Sharma',
         'help': 'Plugins:Zotero Citations',
     }
-
+# sadly this does not work anymore
     # def zotero_handle(self, link):
     #     """Handle Zotero links of the form zotero://."""
     #     url = link.replace('zotero', 'http')
@@ -77,13 +77,6 @@ class ZoteroDialog(Dialog):
         self.textentry = InputEntry()
         self.vbox.pack_start(self.textentry, False, True, 0)
         self.preferences = preferences
-
-        # self.radio1 = Gtk.RadioButton.new_with_mnemonic_from_widget(None, _('Search in Title, Author and Date'))
-        # self.radio2 = Gtk.RadioButton.new_with_mnemonic_from_widget(self.radio1, _('Search in All Fields and Tags'))
-        # self.radio3 = Gtk.RadioButton.new_with_mnemonic_from_widget(self.radio2, _('Search Everywhere'))
-        # self.vbox.add(self.radio1)
-        # self.vbox.add(self.radio2)
-        # self.vbox.add(self.radio3)
         first = None
         options = ["Search in Title, Author and Date",
                    "Search in All Fields and Tags",
