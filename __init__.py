@@ -9,7 +9,6 @@ from zim.plugins import PluginClass
 from zim.gui.pageview import PageViewExtension
 from zim.actions import action
 from zim.gui.widgets import Dialog, InputEntry
-from zim.gui.applications import open_url
 import json
 try:
     # For Python 3.0 and later
@@ -28,20 +27,20 @@ class ZoteroPlugin(PluginClass):
                          'This plugin allows you to insert Zotero citations that link directly to the Zotero desktop application.'
                          'You need to install the "zotxt" plugin in Zotero application, and the Zotero application must be running'
                          ' for this plugin to function.'),
-        'authors': 'Shivam Sharma, Ian Cynk',
+        'authors': 'Shivam Sharma',
         'help': 'Plugins:Zotero Citations',
     }
 
-    def zotero_handle(self, link):
-        """Handle Zotero links of the form zotero://."""
-        url = link.replace('zotero', 'http')
-        try:
-            if "success" in urlopen(url).read().lower():
-                return True
-            else:
-                return False
-        except:
-            return False
+    # def zotero_handle(self, link):
+    #     """Handle Zotero links of the form zotero://."""
+    #     url = link.replace('zotero', 'http')
+    #     try:
+    #         if "success" in urlopen(url).read().lower():
+    #             return True
+    #         else:
+    #             return False
+    #     except:
+    #         return False
 
     plugin_preferences = (
         ('link_format', 'choice', _('Link Format'),
@@ -50,8 +49,6 @@ class ZoteroPlugin(PluginClass):
     )
 
 
-
-# class ZoteroWindowExtension(MainWindowExtension):
 class ZoteroPageViewExtension(PageViewExtension):
     """Define the input window."""
 
@@ -59,14 +56,13 @@ class ZoteroPageViewExtension(PageViewExtension):
         """Window constructor."""
         PageViewExtension.__init__(self, plugin, pageview)
         self.preferences = plugin.preferences
-        # self.ui.register_url_handler('zotero',
-                                            # self.plugin.zotero_handle)
 
     @action(_('_Citation...'), accelerator='<Primary><Alt>I', menuhints='notebook')  # T: menu item
     def insert_citation(self):
         """Will be called by the menu item or key binding."""
         dialog = ZoteroDialog.unique(self, self.pageview, self.preferences)
         dialog.show_all()
+
 
 class ZoteroDialog(Dialog):
     """The Zotero specific Input Dialog."""
