@@ -27,7 +27,7 @@ class ZoteroPlugin(PluginClass):
                          'This plugin allows you to insert Zotero citations that link directly to the Zotero desktop application.'
                          'You need to install the "zotxt" plugin in Zotero application, and the Zotero application must be running'
                          ' for this plugin to function.'),
-        'authors': 'Shivam Sharma',
+        'author': 'Shivam Sharma',
         'help': 'Plugins:Zotero Citations',
     }
 
@@ -57,7 +57,7 @@ class ZoteroPageViewExtension(PageViewExtension):
         PageViewExtension.__init__(self, plugin, pageview)
         self.preferences = plugin.preferences
 
-    @action(_('_Citation...'), accelerator='<Primary><Alt>I', menuhints='notebook')  # T: menu item
+    @action(_('_Citation...'), accelerator='<Primary><Alt>I', menuhints='insert')  # T: menu item
     def insert_citation(self):
         """Will be called by the menu item or key binding."""
         dialog = ZoteroDialog.unique(self, self.pageview, self.preferences)
@@ -77,12 +77,19 @@ class ZoteroDialog(Dialog):
         self.textentry = InputEntry()
         self.vbox.pack_start(self.textentry, False, True, 0)
         self.preferences = preferences
+
+        # self.radio1 = Gtk.RadioButton.new_with_mnemonic_from_widget(None, _('Search in Title, Author and Date'))
+        # self.radio2 = Gtk.RadioButton.new_with_mnemonic_from_widget(self.radio1, _('Search in All Fields and Tags'))
+        # self.radio3 = Gtk.RadioButton.new_with_mnemonic_from_widget(self.radio2, _('Search Everywhere'))
+        # self.vbox.add(self.radio1)
+        # self.vbox.add(self.radio2)
+        # self.vbox.add(self.radio3)
         first = None
         options = ["Search in Title, Author and Date",
                    "Search in All Fields and Tags",
                    "Search Everywhere"]
         for text in options:
-            self.radio = Gtk.RadioButton(first, text)
+            self.radio = Gtk.RadioButton.new_with_mnemonic_from_widget(first, text)
             if not first:
                 first = self.radio
             self.vbox.pack_start(self.radio, False, True, 0)
