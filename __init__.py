@@ -113,7 +113,7 @@ class ZoteroDialog(Dialog):
         format = '&format=' + link_format
         url = 'http://' + root + '/search?q=' + text + format + method
         try:
-            resp = json.loads(urlopen(url).read())
+            resp = json.loads(urlopen(url).read().decode('utf-8'))
             if link_format == 'bibliography':
                 for i in resp:
                     key = i['key']
