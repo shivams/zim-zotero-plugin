@@ -3,19 +3,19 @@
 # Copyright: 2017 Shivam Sharma <shivam.src@gmail.com>
 # License: GNU GPL v2 or higher
 
-
-from gi.repository import Gtk
 from zim.plugins import PluginClass
 from zim.gui.pageview import PageViewExtension
 from zim.actions import action
-from zim.gui.widgets import Dialog, InputEntry
+from zim.gui.widgets import Dialog, ErrorDialog
 import json
 try:
     # For Python 3.0 and later
     from urllib.request import urlopen
+    from urllib.parse import urlencode
 except ImportError:
     # Fall back to Python 2's urllib2
     from urllib2 import urlopen
+    from urllib import urlencode
 
 
 class ZoteroPlugin(PluginClass):
@@ -30,22 +30,12 @@ class ZoteroPlugin(PluginClass):
         'author': 'Shivam Sharma',
         'help': 'Plugins:Zotero Citations',
     }
-# sadly this does not work anymore
-    # def zotero_handle(self, link):
-    #     """Handle Zotero links of the form zotero://."""
-    #     url = link.replace('zotero', 'http')
-    #     try:
-    #         if "success" in urlopen(url).read().lower():
-    #             return True
-    #         else:
-    #             return False
-    #     except:
-    #         return False
 
     plugin_preferences = (
         ('link_format', 'choice', _('Link Format'),
          'betterbibtexkey',
-         ('betterbibtexkey', 'easykey', 'key', 'bibliography')),
+         ('betterbibtexkey', 'key', 'bibliography')),
+        ('bibliography_style', 'string', _('Bibliography Style'), ''),
     )
 
 
@@ -67,6 +57,15 @@ class ZoteroPageViewExtension(PageViewExtension):
 class ZoteroDialog(Dialog):
     """The Zotero specific Input Dialog."""
 
+    zotxturl = "http://127.0.0.1:23119/zotxt/search?"
+    linkurl = "zotero://select/items/"
+    forminputs = [
+            ('searchtext', 'string', 'Pattern'),
+            ('search:titleCreatorYear', 'option', 'Search in Title, Author and Date'),
+            ('search:fields', 'option', 'Search in All Fields and Tags'),
+            ('search:everything', 'option', 'Search Everywhere')
+        ]
+
     def __init__(self, pageview, preferences):
         """Initialize the Input Box with options."""
         Dialog.__init__(self, pageview, _('Search in Zotero'),  # T: Dialog title
@@ -74,85 +73,56 @@ class ZoteroDialog(Dialog):
                         defaultwindowsize=(350, 200))
 
         self.pageview = pageview
-        self.textentry = InputEntry()
-        self.vbox.pack_start(self.textentry, False, True, 0)
         self.preferences = preferences
-        first = None
-        options = ["Search in Title, Author and Date",
-                   "Search in All Fields and Tags",
-                   "Search Everywhere"]
-        for text in options:
-            self.radio = Gtk.RadioButton.new_with_mnemonic_from_widget(first, text)
-            if not first:
-                first = self.radio
-            self.vbox.pack_start(self.radio, False, True, 0)
-            self.radio.show()
+
+        self.add_form(inputs=self.forminputs)
 
     def run(self):
         """Call the widget.dialog.run method."""
         Dialog.run(self)
 
     def do_response_ok(self):
-        """Call to insert citation when pressing ok."""
-        text = self.textentry.get_text()
-        buffer = self.pageview.textview.get_buffer()
-        active = [r for r in self.radio.get_group() if r.get_active()]  # @+
-        radiotext = active[0].get_label()  # @+
-        self.insert_citation(text, radiotext, buffer)
-        return True
+        """
+        Call to insert citation when pressing ok.
+        Will insert the whole bibliography text.
+        """
+        textbuffer = self.pageview.textview.get_buffer()
+        data = {}
 
-    def insert_citation(self, text, radiotext, buffer):
-        """Will insert the whole bibliography text."""
-        root = "127.0.0.1:23119/zotxt"
-        method = ''  # Method defaults to titleCreatorYear
-        if "Tags" in radiotext:
-            method = '&method=fields'
-        elif "Everywhere" in radiotext:
-            method = '&method=everything'
         link_format = self.preferences['link_format']
-        format = '&format=' + link_format
-        url = 'http://' + root + '/search?q=' + text + format + method
+        bibliography_style = self.preferences['bibliography_style']
+
+        if link_format == 'bibliography' and bibliography_style != '':
+            data['style'] = bibliography_style
+
+        data['method'] = self.form['search']
+        data['format'] = link_format
+        data['q'] = self.form['searchtext']
+        urlvalues = urlencode(data)
+        url = self.zotxturl + urlvalues
         try:
             resp = json.loads(urlopen(url).read().decode('utf-8'))
             if link_format == 'bibliography':
                 for i in resp:
                     key = i['key']
-                    try:
-                        zotlink = 'zotero://' + root + '/select?key=' + key
-                        bibtext = i['text']
-                        buffer.insert_link_at_cursor(bibtext, href=zotlink)
-                        buffer.insert_at_cursor("\n")
-                    except:
-                        pass
+                    zotlink = (self.linkurl + key)
+                    bibtext = i['text']
+                    textbuffer.insert_link_at_cursor(bibtext, href=zotlink)
+                    textbuffer.insert_at_cursor("\n")
             elif link_format == 'betterbibtexkey':
                 for key in resp:
-                    try:
-                        zotlink = ('zotero://' + root +
-                                   '/select?betterbibtexkey=' + key)
-                        buffer.insert_link_at_cursor(key, href=zotlink)
-                        buffer.insert_at_cursor("\n")
-                    except:
-                        pass
-            elif link_format == 'easykey':
-                for key in resp:
-                    try:
-                        zotlink = ('zotero://' + root +
-                                   '/select?easykey=' + key)
-                        buffer.insert_link_at_cursor(key, href=zotlink)
-                        buffer.insert_at_cursor("\n")
-                    except:
-                        pass
+                    zotlink = (self.linkurl + '@' + key)
+                    textbuffer.insert_link_at_cursor(key, href=zotlink)
+                    textbuffer.insert_at_cursor("\n")
             elif link_format == 'key':
                 for key in resp:
-                    try:
-                        zotlink = ('zotero://' + root +
-                                   '/select?key=' + key)
-                        buffer.insert_link_at_cursor(key, href=zotlink)
-                        buffer.insert_at_cursor("\n")
-                    except:
-                        pass
+                    zotlink = (self.linkurl + key)
+                    textbuffer.insert_link_at_cursor(key, href=zotlink)
+                    textbuffer.insert_at_cursor("\n")
             else:
-                buffer.insert_at_cursor('link format unknown: ' + link_format
-                                        + "\n")
-        except:
-            pass
+                ErrorDialog(self, 'link format unknown: ' + link_format).run()
+                return False
+        except Exception as error:
+            ErrorDialog(self, str(error)).run()
+            return False
+        return True
