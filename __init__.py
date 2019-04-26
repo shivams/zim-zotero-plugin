@@ -34,7 +34,7 @@ class ZoteroPlugin(PluginClass):
     plugin_preferences = (
         ('link_format', 'choice', _('Link Format'),
          'betterbibtexkey',
-         ('betterbibtexkey', 'key', 'bibliography')),
+         ('betterbibtexkey', 'key', 'easykey', 'bibliography')),
         ('bibliography_style', 'string', _('Bibliography Style'), ''),
     )
 
@@ -57,7 +57,9 @@ class ZoteroPageViewExtension(PageViewExtension):
 class ZoteroDialog(Dialog):
     """The Zotero specific Input Dialog."""
 
-    zotxturl = "http://127.0.0.1:23119/zotxt/search?"
+    zotxturl = "http://127.0.0.1:23119/zotxt/"
+    zotxturlsearch = zotxturl + 'search?'
+    zotxturlitem = zotxturl + 'items?'
     linkurl = "zotero://select/items/"
     forminputs = [
             ('searchtext', 'string', 'Pattern'),
@@ -99,7 +101,7 @@ class ZoteroDialog(Dialog):
         data['format'] = link_format
         data['q'] = self.form['searchtext']
         urlvalues = urlencode(data)
-        url = self.zotxturl + urlvalues
+        url = self.zotxturlsearch + urlvalues
         try:
             resp = json.loads(urlopen(url).read().decode('utf-8'))
             if link_format == 'bibliography':
@@ -114,6 +116,16 @@ class ZoteroDialog(Dialog):
                     zotlink = (self.linkurl + '@' + key)
                     textbuffer.insert_link_at_cursor(key, href=zotlink)
                     textbuffer.insert_at_cursor("\n")
+            elif link_format == 'easykey':
+                for key in resp:
+                    try:
+                        zokey = self.fetchkey(key)
+                    except Exception as error:
+                        ErrorDialog(self, 'Could not fetch Zotero key: ' + str(error)).run()
+                        continue
+                    zotlink = (self.linkurl + zokey)
+                    textbuffer.insert_link_at_cursor(key, href=zotlink)
+                    textbuffer.insert_at_cursor("\n")
             elif link_format == 'key':
                 for key in resp:
                     zotlink = (self.linkurl + key)
@@ -126,3 +138,13 @@ class ZoteroDialog(Dialog):
             ErrorDialog(self, str(error)).run()
             return False
         return True
+
+
+    def fetchkey(self, easykey):
+        data = {
+                'easykey':easykey,
+                'format': 'key'
+               }
+        url = self.zotxturlitem + urlencode(data)
+        resp = json.loads(urlopen(url).read().decode('utf-8'))
+        return resp[0]

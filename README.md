@@ -14,7 +14,8 @@ Warning
 
 This version is not compatible to older ones. **The link format has changed.** 
 It follows the direct supported link format of Zotero and therefore it can not 
-support the easylink format.
+support the easylink format. The old easylink format will have the Zotero key 
+as its address.
 
 ###Convert the old link format into Zotero links
 
