@@ -16,6 +16,16 @@ This version is not compatible to older ones. **The link format has changed.**
 It follows the direct supported link format of Zotero and therefore it can not 
 support the easylink format.
 
+###Convert the old link format into Zotero links
+
+The script will do a move of the original txt files and copy the content to the 
+original name while rewriting the Zotero links. The backup of original file is 
+not changed.
+
+**Warning:** a second run will overwrite the backup files!
+
+	python3 update_links.py path/to/zim-wiki
+
 How does it work?
 -----------------
 
