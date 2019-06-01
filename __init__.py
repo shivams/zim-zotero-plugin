@@ -94,7 +94,7 @@ class ZoteroDialog(Dialog):
         link_format = self.preferences['link_format']
         bibliography_style = self.preferences['bibliography_style']
 
-        if link_format == 'bibliography' and bibliography_style != '':
+        if link_format == 'bibliography' and bibliography_style is not None:
             data['style'] = bibliography_style
 
         data['method'] = self.form['search']
