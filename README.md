@@ -91,6 +91,27 @@ If Zotero is not set as default, you can try to set it with
 In the worst case you need to right click on a Zotero link and click *Open 
 with* -> *Customize* and select Zotero as standard application.
 
+### Alternative using the zotxt
+
+If the way above is not working. There is the `zotero-zotxt.py` script which 
+could be used. Add another desktop entry:
+
+    $ cat .local/share/applications/zotero-zotxt.desktop
+    [Desktop Entry]
+    Name=Zotero zotxt wrapper
+    TryExec=zotero
+    Exec=python3 path/to/zotero-zotxt.py %U
+    Icon=Path_to_Zotero/chrome/icons/default/default256.png
+    Type=Application
+    Terminal=false
+    Categories=Office;
+    MimeType=x-scheme-handler/zotero;text/html;text/plain
+
+Update the database as written above and set now `zotero-zotxt.desktop` as 
+default:
+
+    gio x-scheme-handler/zotero zotero-zotxt.desktop
+
 TODOs
 -----
 
