@@ -27,14 +27,12 @@ def matchkey(m):
         try:
             key = fetchkey(m.group(2))
         except Exception as e:
-            print(f'ERROR: got an exception {e}')
-            print(m.group[0])
+            print(f'ERROR: got an exception {e}\n{m.group(0)}')
     elif m.group(1) == 'betterbibtex':
         key = '@' + m.group(2)
     else:
         key = ''
         print(f'ERROR: found something unspecified: {m.group(0)}')
-        print(m.group[0])
     return f'[[zotero://select/items/{key}|{m.group(3)}]]'
 
 def updatefile(filename, backup=True):
