@@ -12,7 +12,11 @@ Note that you will need to install `zotxt` (https://github.com/egh/zotxt) plugin
 How does it work?
 -----------------
 
-Press `<Control><Alt>-I` or go to Insert -> Citations. A dialog will open up, where you can enter your query to search for items in your Zotero collection. After pressing `GO`, all the matching items will be added into your zim wiki.
+Press `<Control><Shift>-I` or go to Insert -> Citations. A dialog will open up, where you can enter your query to search for items in your Zotero collection. After pressing `GO`, all the matching items will be added into your zim wiki.
+
+Alternatively you can add a single deliberate item by selecting the option `Easy Key`. To use this option, modify your Zotero preferences to make the “Easy Citekey” exporter your default for Quick Copy `<Control><Shift>-C`. Then you can simply paste the key from your clipboard inside the text input and press `GO` to get the intended item.
+
+A quick way to add citation is using `<Control><Alt>-I` or Insert->Cite Selected. This option will immediately add the item that is currenty selected in your Zotero app. 
 
 Changing the default link display format
 ------------------------
