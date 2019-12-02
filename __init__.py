@@ -57,11 +57,17 @@ class ZoteroPageViewExtension(PageViewExtension):
 		PageViewExtension.__init__(self, plugin, pageview)
 		self.preferences = plugin.preferences
 
-	@action(_('_Citation...'), accelerator='<Primary><Alt>I', menuhints='insert')  # T: menu item
+	@action(_('_Citation...'), accelerator='<Primary><Shift>I', menuhints='insert')  # T: menu item
 	def insert_citation(self):
 		"""Will be called by the menu item or key binding."""
 		dialog = ZoteroDialog.unique(self, self.pageview, self.preferences)
 		dialog.show_all()
+		
+	@action(_('_Cite Selected...'), accelerator='<Primary><Alt>I', menuhints='insert')  # T: menu item
+	def insert_selected(self):
+		"""Will be called by the menu item or key binding."""
+		dialog = ZoteroDialog.unique(self, self.pageview, self.preferences)
+		dialog.insert_selected()
 
 
 class ZoteroDialog(Dialog):
@@ -79,10 +85,9 @@ class ZoteroDialog(Dialog):
 		self.preferences = preferences
 		first = None
 		options = ["Easy Key",
-				   "Selected in Zotero",
-				   "Search in Title, Author and Date",
-				   "Search in All Fields and Tags",
-				   "Search Everywhere"]
+					"Search in Title, Author and Date",
+					"Search in All Fields and Tags",
+					"Search Everywhere"]
 		for text in options:
 			self.radio = Gtk.RadioButton.new_with_mnemonic_from_widget(first, text)
 			if not first:
@@ -102,6 +107,10 @@ class ZoteroDialog(Dialog):
 		radiotext = active[0].get_label()  # @+
 		self.insert_citation(text, radiotext, buffer)
 		return True
+
+	def insert_selected(self):
+		buffer = self.pageview.textview.get_buffer()
+		self.insert_citation("", "Selected", buffer)
 
 	def citation_to_buffer(self, root, url, link_format, buffer):
 		try:
