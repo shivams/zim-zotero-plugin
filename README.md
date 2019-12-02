@@ -14,6 +14,9 @@ How does it work?
 
 Press `<Control><Alt>-I` or go to Insert -> Citations. A dialog will open up, where you can enter your query to search for items in your Zotero collection. After pressing `GO`, all the matching items will be added into your zim wiki.
 
+Alternatively you can add a single item by selecting the options `Selected in Zotero` or `Easy Key`.
+`Selected in Zotero` will insert the item currently selected in your Zotero app. To use `Easy Key`, modify your Zotero preferences to make the “Easy Citekey” exporter your default for “Quick Copy (CTRL+SHIFT+C)”.
+
 Changing the default link display format
 ------------------------
 
