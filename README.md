@@ -9,6 +9,24 @@ Clone this repo to your plugins folder and restart your zim wiki:
 
 Note that you will need to install `zotxt` (https://github.com/egh/zotxt) plugin in your Zotero to make this plugin work.
 
+Warning
+-------
+
+This version is not compatible to older ones. **The link format has changed.** 
+It follows the direct supported link format of Zotero and therefore it can not 
+support the easylink format. The old easylink format will have the Zotero key 
+as its address.
+
+###Convert the old link format into Zotero links
+
+The script will do a move of the original txt files and copy the content to the 
+original name while rewriting the Zotero links. The backup of original file is 
+not changed.
+
+**Warning:** a second run will overwrite the backup files!
+
+	python3 update_links.py path/to/zim-wiki
+
 How does it work?
 -----------------
 
@@ -18,21 +36,81 @@ Changing the default link display format
 ------------------------
 
 In zim go to Edit -> Preferences -> Plugins -> Zotero Citations
+
 Under `Configure` you can choose the display format of Zotero links in zim:
 
 - `betterbibtexkey`, e.g. *bloomAreIdeasGetting2017*
-- `easykey`, e.g. *bloom:2017are*
 - `key`, e.g. *1_MGYAJ483*
 - `bibliography`, e.g. *Bloom, Nicholas, Charles Jones, John Van Reenen, and Michael Webb. “Are Ideas Getting Harder to Find?,” 2017. https://doi.org/10.3386/w23782.*
+
+The option `Bibliography Style` can now change the citation style used by the 
+option `bibliography`. Be careful as the option shown in Zotero needs mostly to 
+be transformed.
+
+    RTF Style -> rft-style
 
 Handling zotero:// Links
 ------------------------
 
-~~Items, that are added, are linked to Zotero using the `zotero://` identifier. Currently, zim doesn't handle this identifier. So, you will have to create a custom script. A small such script is available in the repo: `zotero_link_handler.sh`. Copy it somewhere in your PATH. And then, when in zim, right click on the Zotero links and click Open With -> Customize, and add this custom script.~~
+Under Linux you need now a `zotero.desktop` for handling the links. The link 
+should work then in every program. The important part is the 
+`MimeType=x-scheme-handler/zotero;`. With it Zotero is used for `zotero://` 
+links. Adjust your path to Zotero!
 
-~~No need of external scripts to handle zotero links. Now, the plugin handles all the links itself. When you click on any Zotero link in your Notebook, the particular reference is highlighted in Zotero.~~
+    $ cat .local/share/applications/zotero.desktop
+    [Desktop Entry]
+    Name=Zotero
+    TryExec=zotero
+    Exec=zotero -url %U
+    Icon=Path_to_Zotero/chrome/icons/default/default256.png
+    Type=Application
+    Terminal=false
+    Categories=Office;
+    MimeType=x-scheme-handler/zotero;text/html;text/plain
 
-Sad to say, but we are back to the original state, I did not find a way to make zim open `zotero://` links by default in zim 0.70. Hence now you should again take the `zotero_link_handler.sh`, put it on your PATH (and make it executable). Then, when in zim, right click on the Zotero links and click Open With -> Customize, and fill in `zotero_link_handler.sh` as command.
+After updating the mime-database and a zim restart, zim should find Zotero and 
+open the links with it.
+
+    update-mime-database ~/.local/share/mime
+    update-desktop-database ~/.local/share/applications
+
+If the Zotero handler is in the database, the output of `gio` should look like 
+this:
+
+    $ gio mime x-scheme-handler/zotero
+    Default application for »x-scheme-handler/zotero«: zotero.desktop
+    Registered applications:
+            zotero.desktop
+    Recommended applications:
+            zotero.desktop
+
+If Zotero is not set as default, you can try to set it with
+
+    gio x-scheme-handler/zotero zotero.desktop
+
+In the worst case you need to right click on a Zotero link and click *Open 
+with* -> *Customize* and select Zotero as standard application.
+
+### Alternative using the zotxt
+
+If the way above is not working. There is the `zotero-zotxt.py` script which 
+could be used. Add another desktop entry:
+
+    $ cat .local/share/applications/zotero-zotxt.desktop
+    [Desktop Entry]
+    Name=Zotero zotxt wrapper
+    TryExec=zotero
+    Exec=python3 path/to/zotero-zotxt.py %U
+    Icon=Path_to_Zotero/chrome/icons/default/default256.png
+    Type=Application
+    Terminal=false
+    Categories=Office;
+    MimeType=x-scheme-handler/zotero;text/html;text/plain
+
+Update the database as written above and set now `zotero-zotxt.desktop` as 
+default:
+
+    gio x-scheme-handler/zotero zotero-zotxt.desktop
 
 TODOs
 -----
