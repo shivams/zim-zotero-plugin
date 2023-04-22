@@ -36,6 +36,7 @@ class ZoteroPlugin(PluginClass):
          'betterbibtexkey',
          ('betterbibtexkey', 'key', 'easykey', 'bibliography')),
         ('bibliography_style', 'string', _('Bibliography Style'), ''),
+        ('libraries_all', 'bool', _('Include all Zotero libraries (including Group libraries)'), False),
     )
 
 
@@ -102,6 +103,8 @@ class ZoteroDialog(Dialog):
         data['q'] = self.form['searchtext']
         urlvalues = urlencode(data)
         url = self.zotxturlsearch + urlvalues
+        if self.preferences['libraries_all']:
+            url = url + '&library=all'
         try:
             resp = json.loads(urlopen(url).read().decode('utf-8'))
             if link_format == 'bibliography':
