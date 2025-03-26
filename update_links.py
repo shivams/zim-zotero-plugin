@@ -3,8 +3,8 @@
 import os
 import re
 import json
-from urllib.request import urlopen
 from urllib.parse import urlencode
+import requests
 
 patternkey = re.compile(r'\[\[zotero://[\d\.:]+/zotxt/select\?(\w*)key=([\w:]+)\|(.*?)\]\]')
 
@@ -16,7 +16,7 @@ def fetchkey(easykey):
             'format': 'key'
            }
     url = zotxtroot + urlencode(data)
-    resp = json.loads(urlopen(url).read().decode('utf-8'))
+    resp = requests.get(url).json()
     return resp[0]
 
 def matchkey(m):
