@@ -150,8 +150,9 @@ class ZoteroDialog(Dialog):
                 ErrorDialog(self, 'link format unknown: ' + link_format).run()
                 return False
         except Exception as error:
-            errorstr = "While executing the request to Zotero, a error happend" + str(error) + "\n" + url
-            ErrorDialog(self, errorstr).run()
+            short_msg = "While executing the request to Zotero, an error happened"
+            detailed_msg = "Error: " + str(error) + "\n\nURL: " + url
+            ErrorDialog(self, (short_msg, detailed_msg)).run()
             return False
         return True
 
