@@ -18,6 +18,16 @@ except ImportError:
     from urllib import urlencode
 
 
+def get_styles():
+    try:
+        url = "http://127.0.0.1:23119/zotxt/styles"
+        resp = json.loads(urlopen(url, timeout=0.5).read().decode('utf-8'))
+        styles = [item['fileName'].replace('.csl', '') for item in resp]
+        styles.sort()
+        return tuple(styles)
+    except Exception:
+        return ('apa',)
+
 class ZoteroPlugin(PluginClass):
     """plugin info for zim."""
 
@@ -31,11 +41,13 @@ class ZoteroPlugin(PluginClass):
         'help': 'Plugins:Zotero Citations',
     }
 
+    styles = get_styles()
+
     plugin_preferences = (
         ('link_format', 'choice', _('Link Format'),
          'betterbibtexkey',
          ('betterbibtexkey', 'key', 'easykey', 'bibliography')),
-        ('bibliography_style', 'string', _('Bibliography Style'), ''),
+        ('bibliography_style', 'choice', _('Bibliography Style'), 'apa', styles),
         ('libraries_all', 'bool', _('Include all Zotero libraries (including Group libraries)'), False),
     )
 
