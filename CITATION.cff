@@ -1,0 +1,24 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
+cff-version: 1.2.0
+title: zim-zotero-plugin
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+  - given-names: Shivam
+    family-names: Sharma
+    orcid: 'https://orcid.org/0000-0003-1480-7684'
+identifiers:
+  - type: url
+    value: 'https://github.com/shivams/zim-zotero-plugin'
+repository-code: 'https://github.com/shivams/zim-zotero-plugin'
+abstract: >-
+  Zim-Zotero plugin enables you to pull references from
+  Zotero into your Zim Wiki editor, and then click those
+  references to get back to the specific reference in
+  Zotero.
+license: GPL-1.0+
+date-released: '2017-06-25'
