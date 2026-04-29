@@ -119,3 +119,20 @@ TODOs
   - See this launchpad wishlist: https://bugs.launchpad.net/zim/+bug/380844
   - And this blueprint by Jaap (zim BDFL): https://github.com/jaap-karssenberg/zim-wiki/wiki/Blueprint-anchors
 - [ ] Bibtex Support
+
+Citation
+--------
+
+If you use this plugin in academic work, please cite it as software:
+
+    @software{zim_zotero_plugin,
+      title        = {zim-zotero-plugin},
+      author       = {Shivam Sharma},
+      year         = {2017},
+      url          = {https://github.com/shivams/zim-zotero-plugin}
+    }
+
+License
+-------
+
+This project is licensed under GNU GPL v2 or later. See the `LICENSE` file for details.
